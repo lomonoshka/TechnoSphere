@@ -14259,7 +14259,7 @@ a.anchor-link {
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[119]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
@@ -14275,9 +14275,10 @@ a.anchor-link {
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">multiprocessing.dummy</span> <span class="kn">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">Queue</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span> <span class="k">as</span> <span class="n">MPool</span>
-
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">ExitStack</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
 </pre></div>
@@ -14295,12 +14296,12 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[91]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">relod_url</span> <span class="o">=</span> <span class="s1">&#39;https://shop.relod.ru&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RELOD_URL</span> <span class="o">=</span> <span class="s1">&#39;https://shop.relod.ru&#39;</span>
 
-<span class="n">post_request</span> <span class="o">=</span> <span class="s1">&#39;https://shop.relod.ru/bitrix/components/bxready.market2/catalog.section/ajax.php&#39;</span>
+<span class="n">POST_REQUEST</span> <span class="o">=</span> <span class="s1">&#39;https://shop.relod.ru/bitrix/components/bxready.market2/catalog.section/ajax.php&#39;</span>
 </pre></div>
 
      </div>
@@ -14311,7 +14312,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[122]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>
@@ -14329,17 +14330,21 @@ a.anchor-link {
     <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="s2">&quot;YToxMTk6e3M6MTg6IkNPTVBPTkVOVF9URU1QTEFURSI7czo4OiIuZGVmYXVsdCI7czoxMToiSUJMT0NLX1RZUEUiO3M6NzoiY2F0YWxvZyI7czo5OiJJQkxPQ0tfSUQiO3M6MToiMiI7czoxMDoiU0VDVElPTl9JRCI7czo0OiI0NTc3IjtzOjEyOiJTRUNUSU9OX0NPREUiO047czoxMToiRklMVEVSX05BTUUiO3M6MTY6IkNBVEFMT0dfUFJPRFVDVFMiO3M6MTk6IklOQ0xVREVfU1VCU0VDVElPTlMiO3M6MToiQSI7czoxOToiU0hPV19BTExfV09fU0VDVElPTiI7czoxOiJOIjtzOjEzOiJDVVNUT01fRklMVEVSIjtzOjA6IiI7czoxODoiSElERV9OT1RfQVZBSUxBQkxFIjtzOjE6Ik4iO3M6MjU6IkhJREVfTk9UX0FWQUlMQUJMRV9PRkZFUlMiO3M6MToiWSI7czoxODoiRUxFTUVOVF9TT1JUX0ZJRUxEIjtzOjE1OiJQUk9QRVJUWV9SQVRJTkciO3M6MTg6IkVMRU1FTlRfU09SVF9PUkRFUiI7czo0OiJkZXNjIjtzOjE5OiJFTEVNRU5UX1NPUlRfRklFTEQyIjtzOjQ6Im5hbWUiO3M6MTk6IkVMRU1FTlRfU09SVF9PUkRFUjIiO3M6NDoiZGVzYyI7czoxNzoiT0ZGRVJTX1NPUlRfRklFTEQiO3M6MjoiaWQiO3M6MTc6Ik9GRkVSU19TT1JUX09SREVSIjtzOjM6ImFzYyI7czoxODoiT0ZGRVJTX1NPUlRfRklFTEQyIjtzOjU6InNob3dzIjtzOjE4OiJPRkZFUlNfU09SVF9PUkRFUjIiO3M6MzoiYXNjIjtzOjE4OiJQQUdFX0VMRU1FTlRfQ09VTlQiO2k6MjA7czoxODoiTElORV9FTEVNRU5UX0NPVU5UIjtpOjIwO3M6MTM6IlBST1BFUlRZX0NPREUiO2E6MTc6e2k6MDtzOjg6IkFUUl9JU0JOIjtpOjE7czoxNjoiQVRSX1NUT0NLX1NUQVRVUyI7aToyO3M6MTM6IkFUUl9QVUJMSVNIRVIiO2k6MztzOjEwOiJBVFJfQVVUSE9SIjtpOjQ7czoxMjoiQVRSX0xBTkdVQUdFIjtpOjU7czoxMDoiQVRSX1NFUklFUyI7aTo2O3M6MTQ6IkFUUl9TVUJfU0VSSUVTIjtpOjc7czoxMToiQVRSX0VESVRJT04iO2k6ODtzOjc6IkFUUl9BR0UiO2k6OTtzOjEwOiJBVFJfRk9STUFUIjtpOjEwO3M6MTE6IkFUUl9DQVJSSUVSIjtpOjExO3M6MTY6IkFUUl9QUk9EVUNUX1RZUEUiO2k6MTI7czo5OiJBVFJfUEFHRVMiO2k6MTM7czoxMjoiQVRSX1BVQl9EQVRFIjtpOjE0O3M6MTA6IkFUUl9PUklHSU4iO2k6MTU7czo2OiJyYXRpbmciO2k6MTY7czowOiIiO31zOjIwOiJQUk9QRVJUWV9DT0RFX01PQklMRSI7YToyOntpOjA7czo4OiJBVFJfSVNCTiI7aToxO3M6MTM6IkFUUl9QVUJMSVNIRVIiO31zOjE3OiJPRkZFUlNfRklFTERfQ09ERSI7YTo2OntpOjA7czo0OiJOQU1FIjtpOjE7czoxMjoiUFJFVklFV19URVhUIjtpOjI7czoxNToiUFJFVklFV19QSUNUVVJFIjtpOjM7czoxMToiREVUQUlMX1RFWFQiO2k6NDtzOjE0OiJERVRBSUxfUElDVFVSRSI7aTo1O3M6MDoiIjt9czoyMDoiT0ZGRVJTX1BST1BFUlRZX0NPREUiO2E6Mjp7aTowO3M6NjoiTk9USUNFIjtpOjE7czowOiIiO31zOjEyOiJPRkZFUlNfTElNSVQiO3M6MToiMCI7czoyMDoiUFJPRFVDVF9ESVNQTEFZX01PREUiO3M6MToiWSI7czoxMzoiQUREX1BJQ1RfUFJPUCI7czoxNzoiQVRSX0VYVFJBX1BJQ1RVUkUiO3M6MTk6Ik9GRkVSX0FERF9QSUNUX1BST1AiO3M6MToiLSI7czoxNjoiT0ZGRVJfVFJFRV9QUk9QUyI7YToxOntpOjA7czo2OiJOT1RJQ0UiO31zOjIwOiJQUk9EVUNUX1NVQlNDUklQVElPTiI7czoxOiJZIjtzOjIxOiJTSE9XX0RJU0NPVU5UX1BFUkNFTlQiO3M6MToiWSI7czoxNDoiU0hPV19PTERfUFJJQ0UiO3M6MToiWSI7czoxNzoiU0hPV19NQVhfUVVBTlRJVFkiO3M6MToiQSI7czoyMToiQlhSX1NIT1dfTUFYX1FVQU5USVRZIjtzOjE6IkEiO3M6MTY6IlNIT1dfQ0xPU0VfUE9QVVAiO3M6MToiWSI7czoxMjoiTUVTU19CVE5fQlVZIjtzOjEyOiLQmtGD0L/QuNGC0YwiO3M6MjI6Ik1FU1NfQlROX0FERF9UT19CQVNLRVQiO3M6MTc6ItCSINC60L7RgNC30LjQvdGDIjtzOjE4OiJNRVNTX0JUTl9TVUJTQ1JJQkUiO3M6NDQ6ItCj0LLQtdC00L7QvNC40YLRjCDQviDQv9C+0YHRgtGD0L/Qu9C10L3QuNC4IjtzOjE1OiJNRVNTX0JUTl9ERVRBSUwiO3M6MzQ6ItCf0L7QtNGA0L7QsdC90LXQtSDQviDRgtC+0LLQsNGA0LUiO3M6MTg6Ik1FU1NfTk9UX0FWQUlMQUJMRSI7czoyNDoi0J3QtdGCINCyINC90LDQu9C40YfQuNC4IjtzOjExOiJTRUNUSU9OX1VSTCI7czozMToiL2NhdGFsb2ctcHJvZHVjdHMvI1NFQ1RJT05fSUQjLyI7czoxMDoiREVUQUlMX1VSTCI7czozMzoiL2NhdGFsb2ctcHJvZHVjdHMvI0VMRU1FTlRfQ09ERSMvIjtzOjE5OiJTRUNUSU9OX0lEX1ZBUklBQkxFIjtzOjEwOiJTRUNUSU9OX0lEIjtzOjEwOiJDQUNIRV9UWVBFIjtzOjE6IkEiO3M6MTA6IkNBQ0hFX1RJTUUiO3M6ODoiMzYwMDAwMDAiO3M6MTI6IkNBQ0hFX0ZJTFRFUiI7czoxOiJZIjtzOjEyOiJDQUNIRV9HUk9VUFMiO3M6MToiWSI7czo5OiJTRVRfVElUTEUiO3M6MToiWSI7czoxMzoiQlJPV1NFUl9USVRMRSI7czoxOiItIjtzOjEzOiJNRVRBX0tFWVdPUkRTIjtzOjE6Ii0iO3M6MTY6Ik1FVEFfREVTQ1JJUFRJT04iO3M6MToiLSI7czoxNzoiU0VUX0xBU1RfTU9ESUZJRUQiO3M6MToiWSI7czoyNDoiVVNFX01BSU5fRUxFTUVOVF9TRUNUSU9OIjtzOjE6IlkiO3M6MTg6IkFERF9TRUNUSU9OU19DSEFJTiI7czoxOiJOIjtzOjE1OiJBQ1RJT05fVkFSSUFCTEUiO3M6NjoiYWN0aW9uIjtzOjE5OiJQUk9EVUNUX0lEX1ZBUklBQkxFIjtzOjI6ImlkIjtzOjEwOiJQUklDRV9DT0RFIjthOjE6e2k6MDtzOjEwOiJCQVNFX1BSSUNFIjt9czoxNToiVVNFX1BSSUNFX0NPVU5UIjtzOjE6Ik4iO3M6MTY6IlNIT1dfUFJJQ0VfQ09VTlQiO3M6MDoiIjtzOjE3OiJQUklDRV9WQVRfSU5DTFVERSI7czoxOiJZIjtzOjE2OiJDT05WRVJUX0NVUlJFTkNZIjtzOjE6IlkiO3M6MTE6IkNVUlJFTkNZX0lEIjtzOjM6IlJVQiI7czoxMDoiQkFTS0VUX1VSTCI7czoyMDoiL3BlcnNvbmFsL2Jhc2tldC5waHAiO3M6MjA6IlVTRV9QUk9EVUNUX1FVQU5USVRZIjtzOjE6IlkiO3M6MjU6IlBST0RVQ1RfUVVBTlRJVFlfVkFSSUFCTEUiO3M6ODoicXVhbnRpdHkiO3M6MjQ6IkFERF9QUk9QRVJUSUVTX1RPX0JBU0tFVCI7czoxOiJZIjtzOjIyOiJQUk9EVUNUX1BST1BTX1ZBUklBQkxFIjtzOjQ6InByb3AiO3M6MjY6IlBBUlRJQUxfUFJPRFVDVF9QUk9QRVJUSUVTIjtzOjE6IlkiO3M6MTg6IlBST0RVQ1RfUFJPUEVSVElFUyI7YTo0OntpOjA7czoxMDoiQVRSX0FVVEhPUiI7aToxO3M6MTI6IkFUUl9MQU5HVUFHRSI7aToyO3M6NzoiQVRSX0FHRSI7aTozO3M6MTA6IkFUUl9PUklHSU4iO31zOjIyOiJPRkZFUlNfQ0FSVF9QUk9QRVJUSUVTIjthOjE6e2k6MDtzOjY6Ik5PVElDRSI7fXM6MjA6IkFERF9UT19CQVNLRVRfQUNUSU9OIjtOO3M6MTU6IkRJU1BMQVlfQ09NUEFSRSI7czoxOiJOIjtzOjE0OiJQQUdFUl9URU1QTEFURSI7czo4OiIuZGVmYXVsdCI7czoxNzoiRElTUExBWV9UT1BfUEFHRVIiO3M6MToiWSI7czoyMDoiRElTUExBWV9CT1RUT01fUEFHRVIiO3M6MToiWSI7czoxMToiUEFHRVJfVElUTEUiO3M6MTI6ItCi0L7QstCw0YDRiyI7czoxNzoiUEFHRVJfU0hPV19BTFdBWVMiO3M6MToiTiI7czoyMDoiUEFHRVJfREVTQ19OVU1CRVJJTkciO3M6MToiTiI7czozMToiUEFHRVJfREVTQ19OVU1CRVJJTkdfQ0FDSEVfVElNRSI7czo1OiIzNjAwMCI7czoxNDoiUEFHRVJfU0hPV19BTEwiO3M6MToiTiI7czoyMjoiUEFHRVJfQkFTRV9MSU5LX0VOQUJMRSI7czoxOiJOIjtzOjE1OiJQQUdFUl9CQVNFX0xJTksiO047czoxNzoiUEFHRVJfUEFSQU1TX05BTUUiO047czo5OiJMQVpZX0xPQUQiO3M6MToiWSI7czoxODoiTUVTU19CVE5fTEFaWV9MT0FEIjtzOjIzOiLQn9C+0LrQsNC30LDRgtGMINC10YnRkSI7czoxNDoiTE9BRF9PTl9TQ1JPTEwiO3M6MToiTiI7czoxNDoiU0VUX1NUQVRVU180MDQiO3M6MToiWSI7czo4OiJTSE9XXzQwNCI7czoxOiJZIjtzOjg6IkZJTEVfNDA0IjtzOjg6Ii80MDQucGhwIjtzOjExOiJNRVNTQUdFXzQwNCI7czowOiIiO3M6MTU6IkNPTVBBVElCTEVfTU9ERSI7czoxOiJZIjtzOjI4OiJESVNBQkxFX0lOSVRfSlNfSU5fQ09NUE9ORU5UIjtzOjE6Ik4iO3M6MjI6IlVTRV9FTkhBTkNFRF9FQ09NTUVSQ0UiO3M6MToiWSI7czoxMjoiRU5MQVJHRV9QUk9QIjtzOjA6IiI7czoxMjoiQ09NUEFSRV9QQVRIIjtzOjUwOiIvY2F0YWxvZy1wcm9kdWN0cy9jb21wYXJlLnBocD9hY3Rpb249I0FDVElPTl9DT0RFIyI7czoxNjoiTUVTU19CVE5fQ09NUEFSRSI7czoxNjoi0KHRgNCw0LLQvdC40YLRjCI7czoxMjoiQ09NUEFSRV9OQU1FIjtzOjIwOiJDQVRBTE9HX0NPTVBBUkVfTElTVCI7czoyMjoiTUVTU19TSE9XX01BWF9RVUFOVElUWSI7czoxNDoi0J3QsNC70LjRh9C40LUiO3M6MjQ6IlJFTEFUSVZFX1FVQU5USVRZX0ZBQ1RPUiI7czoyOiIxMCI7czoyNzoiTUVTU19SRUxBVElWRV9RVUFOVElUWV9NQU5ZIjtzOjEwOiLQvNC90L7Qs9C+IjtzOjI2OiJNRVNTX1JFTEFUSVZFX1FVQU5USVRZX0ZFVyI7czo4OiLQvNCw0LvQviI7czoxNzoiUVVBTlRJVFlfSU5fU1RPQ0siO3M6MTc6ItCSINC90LDQu9C40YfQuNC4IjtzOjE4OiJRVUFOVElUWV9PVVRfU1RPQ0siO3M6MTc6ItCf0L7QtCDQt9Cw0LrQsNC3IjtzOjI0OiJISURFX1NFQ1RJT05fREVTQ1JJUFRJT04iO3M6MToiWSI7czoxMjoiVEhJU19VTklDX0lEIjtzOjk6IjFfc2VjdGlvbiI7czo2OiJSRUdJT04iO3M6MDoiIjtzOjIwOiJCWFJfQUpBWF9SRUdJT05fSU5GTyI7czowOiIiO3M6MzM6IkJYUkVBRFlfRUxFTUVOVF9BRERDTEFTU19MSVNUUEFHRSI7czowOiIiO3M6Mjk6IkJYUkVBRFlfRUxFTUVOVF9EUkFXX0xJU1RQQUdFIjtzOjIxOiJlY29tbWVyY2UubTIudGFibGUudjEiO3M6MzU6IkJYUkVBRFlfRUxFTUVOVF9FWFRfUEFSQU1TX0xJU1RQQUdFIjtzOjEyOiJhcnJFeHRQYXJhbXMiO3M6Mjc6IkJYUkVBRFlfVVNFUl9UWVBFU19MSVNUUEFHRSI7czoxOiJOIjtzOjMzOiJCWFJFQURZX1VTRV9FTEVNRU5UQ0xBU1NfTElTVFBBR0UiO3M6MToiWSI7czozMToiQlhSRUFEWV9WRVJUSUNBTF9BTElHTl9MSVNUUEFHRSI7czoxOiJZIjtzOjE3OiJDVVJSRU5UX0JBU0VfUEFHRSI7czo3MzoiL2NhdGFsb2ctcHJvZHVjdHMvNDU3Ny8/dmlldz10YWJsZSZudW09MjAmc29ydD1QUk9QRVJUWV9SQVRJTkcmb3JkZXI9ZGVzYyI7czoxMToiUEFSRU5UX05BTUUiO3M6MjM6ImJ4cmVhZHkubWFya2V0MjpjYXRhbG9nIjtzOjIwOiJQQVJFTlRfVEVNUExBVEVfTkFNRSI7czoxMzoicmVsb2QtY2F0YWxvZyI7czoyMDoiUEFSRU5UX1RFTVBMQVRFX1BBR0UiO3M6Nzoic2VjdGlvbiI7czoxMzoiR0xPQkFMX0ZJTFRFUiI7YTowOnt9fQ==.00631674e61b33c8e8aa3994ce36c904c9993f986d212be47e77fd4ca26223d4&quot;</span><span class="p">,</span>
     <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;showMore&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PAGEN_1&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
-    <span class="n">page_soup</span> <span class="o">=</span> <span class="n">get_json</span><span class="p">(</span><span class="n">post_request</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-    <span class="n">table</span> <span class="o">=</span> <span class="n">page_soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;data-entity&#39;</span><span class="p">:</span> <span class="s1">&#39;container-1&#39;</span><span class="p">})</span>
-    <span class="n">div_tags</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;bxr-element-name&#39;</span><span class="p">})</span>
-    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">relod_url</span><span class="si">}{</span><span class="n">div_tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)[</span><span class="s1">&#39;href&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">div_tag</span> <span class="ow">in</span> <span class="n">div_tags</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">urls</span>
+    <span class="n">page_soup</span> <span class="o">=</span> <span class="n">get_json</span><span class="p">(</span><span class="n">POST_REQUEST</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">page_soup</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not get jsone with data: </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">page_soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;data-entity&#39;</span><span class="p">:</span> <span class="s1">&#39;container-1&#39;</span><span class="p">})</span>
+        <span class="n">div_tags</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;bxr-element-name&#39;</span><span class="p">})</span>
+        <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">RELOD_URL</span><span class="si">}{</span><span class="n">div_tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)[</span><span class="s1">&#39;href&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">div_tag</span> <span class="ow">in</span> <span class="n">div_tags</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">urls</span>
 
 <span class="n">number_of_pages</span> <span class="o">=</span> <span class="mi">250</span>
 <span class="k">with</span> <span class="n">MPool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="n">links</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_urls_from_page</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_of_pages</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
-<span class="n">links</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">links</span><span class="p">)))</span>
+<span class="n">links</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">links</span><span class="p">)))</span>
 </pre></div>
 
      </div>
@@ -14359,8 +14364,8 @@ a.anchor-link {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>CPU times: user 44.7 ms, sys: 107 ms, total: 151 ms
-Wall time: 47.1 s
+<pre>CPU times: user 50 ms, sys: 50.4 ms, total: 100 ms
+Wall time: 51.5 s
 </pre>
 </div>
 </div>
@@ -14372,7 +14377,7 @@ Wall time: 47.1 s
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[124]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">n_attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">t_sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -14383,11 +14388,11 @@ Wall time: 47.1 s
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">t_sleep</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">process_page</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
-    <span class="n">book_soup</span> <span class="o">=</span> <span class="n">get_page</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">book_soup</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span>
     <span class="n">page_data</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">page_data</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span>
+    <span class="n">book_soup</span> <span class="o">=</span> <span class="n">get_page</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">book_soup</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">page_data</span>
     
     <span class="c1"># getting name of book</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">book_soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;itemprop&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">})</span>
@@ -14477,12 +14482,12 @@ Wall time: 47.1 s
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[125]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>  <span class="c1"># очередь ссылок на книги</span>
 <span class="n">processes</span> <span class="o">=</span> <span class="mi">8</span> 
-<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+<span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">[:</span><span class="mi">80</span><span class="p">]:</span>
     <span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">process_page_wrapper</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
@@ -14491,17 +14496,17 @@ Wall time: 47.1 s
 
         <span class="k">while</span> <span class="ow">not</span> <span class="n">queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
             <span class="n">url</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-            <span class="n">record</span> <span class="o">=</span> <span class="n">process_page</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">record</span> <span class="o">=</span> <span class="n">process_page</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="n">record_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">record_str</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f_json</span><span class="p">)</span>
+
+                <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
                 <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not get html with url: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
-            
-            <span class="n">record_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">record_str</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f_json</span><span class="p">)</span>
-
-            <span class="c1"># счетчик должен атомарно обновиться</span>
-            <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 
 <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">,</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">queue</span><span class="o">.</span><span class="n">qsize</span><span class="p">())</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
@@ -14526,7 +14531,7 @@ Wall time: 47.1 s
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|██████████| 5000/5000 [59:38&lt;00:00,  1.40it/s]  
+<pre>100%|██████████| 80/80 [00:54&lt;00:00,  1.48it/s]
 </pre>
 </div>
 </div>
@@ -14538,17 +14543,17 @@ Wall time: 47.1 s
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[68]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">records_reader</span><span class="p">(</span><span class="n">dirname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
-        <span class="n">file_chain</span> <span class="o">=</span> <span class="n">chain</span><span class="p">([</span><span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;data/part_</span><span class="si">{:05d}</span><span class="s1">.jsonl.gz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
-                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">processes</span><span class="p">)])</span>
-        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_chain</span><span class="p">:</span>
-            <span class="n">file</span> <span class="o">=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">getreader</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">)(</span><span class="n">file</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">json_dict</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>
+        <span class="n">dict_chain</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">codecs</span><span class="o">.</span><span class="n">getreader</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+                                                 <span class="p">(</span><span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)))</span>
+                             <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">json_dict</span> <span class="ow">in</span> <span class="n">dict_chain</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span>
 
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records_reader</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">))</span>
